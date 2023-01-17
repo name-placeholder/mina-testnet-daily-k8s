@@ -9,6 +9,6 @@ jobs:
       - id: get-tag
         run: |
           URL=https://gist.githubusercontent.com/akoptelov/56c1ff38a0d0b1a82eec1a74f2fed856/raw/4a17548743f49827bd43215056493f8e870b90ba/tags.json
-          JQ='.results | sort_by(.last_updated) | .[] | select(.name | endswith("focal-mainnet")) | map(.name) '
+          JQ='.results | sort_by(.last_updated) | .[] | select(.name | endswith("focal-mainnet")) | .name'
           echo "tag=$(curl "$URL" | jq -cr "$JQ" | head -n 1)" >> $GITHUB_OUTPUT
       - run: echo ${{ steps.get-tag.outputs.tag }}
