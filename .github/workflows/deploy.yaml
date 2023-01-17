@@ -10,5 +10,5 @@ jobs:
         run: |
           URL=https://gist.githubusercontent.com/akoptelov/56c1ff38a0d0b1a82eec1a74f2fed856/raw/4a17548743f49827bd43215056493f8e870b90ba/tags.json
           JQ='.results | sort_by(.last_updated) | [ .[] | select(.name | endswith("focal-mainnet"))]'
-          echo "response=$(curl "$URL" | jq . "$JQ")" >> $GITHUB_OUTPUT
+          echo "response=$(curl "$URL" | jq "$JQ")" >> $GITHUB_OUTPUT
       - run: echo ${{ steps.get-tags.outputs.response }}
