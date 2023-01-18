@@ -27,9 +27,9 @@ jobs:
             --values=values.yaml
             --set-file=mina.runtimeConfig=resources/daemon.json
             --set=mina.image=minaprotocol/mina-daemon:${{ steps.get-tag.outputs.tag }}
-          KUBECONFIG: ${{secrets.KUBECONFIG}}
+          KUBECONFIG_CONTENT: ${{secrets.KUBECONFIG}}
         run: |
-          mkdir -p $HOME/.kube && echo "$KUBECONFIG" > $HOME/.kube/config
+          mkdir -p $HOME/.kube && echo "$KUBECONFIG_CONTENT" > $HOME/.kube/config
           helm upgrade seeds mina/helm/seed-node $HELM_ARGS
           helm upgrade producers mina/helm/block-producer $HELM_ARGS
           helm upgrade snark-worker mina/helm/snark-worker/ $HELM_ARGS --set-file=publicKey=resources/key-05.pub
