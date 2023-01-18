@@ -24,14 +24,19 @@ jobs:
         uses: WyriHaximus/github-action-helm3@v2
         with:
           exec: |
-            helm upgrade --install seeds --values=values.yaml --set-file=mina.runtimeConfig=resources/daemon.json \
-                --set=mina.image=${{ steps.get-tag.outputs.tag }} \
-                mina/helm/seed-node
-            helm upgrade --install producers --values=values.yaml --set-file=mina.runtimeConfig=resources/daemon.json \
-                --set=mina.image=${{ steps.get-tag.outputs.tag }} \
-                mina/helm/block-producer
-            helm upgrade --install snark-worker mina/helm/snark-worker/ --values=values.yaml \
-                --set-file=publicKey=resources/key-05.pub --set-file=mina.runtimeConfig=resources/daemon.json \
-                --set=mina.image=${{ steps.get-tag.outputs.tag }} \
-                mina/helm/snark-workers
+            helm upgrade seeds mina/helm/seed-node \
+                --install \
+                --values=values.yaml \
+                --set-file=mina.runtimeConfig=resources/daemon.json \
+                --set=mina.image=${{ steps.get-tag.outputs.tag }}
+            helm upgrade producers mina/helm/block-producer \
+                --install \
+                --values=values.yaml \
+                --set-file=mina.runtimeConfig=resources/daemon.json \
+                --set=mina.image=${{ steps.get-tag.outputs.tag }}
+            helm upgrade snark-worker mina/helm/snark-worker/ \
+                --install \
+                --values=values.yaml \
+                --set-file=mina.runtimeConfig=resources/daemon.json \
+                --set=mina.image=${{ steps.get-tag.outputs.tag }}
           kubeconfig: ${{secrets.KUBECONFIG}}
