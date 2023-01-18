@@ -7,18 +7,28 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - id: get-tag
+      - name: Get Latest Mina Tag
+        id: get-tag
         run: |
           URL=https://gist.githubusercontent.com/akoptelov/56c1ff38a0d0b1a82eec1a74f2fed856/raw/4a17548743f49827bd43215056493f8e870b90ba/tags.json
           JQ='.results | sort_by(.last_updated) | .[] | select(.name | endswith("focal-mainnet")) | .name'
           echo "tag=$(curl "$URL" | jq -cr "$JQ" | head -n 1)" >> $GITHUB_OUTPUT
       - run: echo "Using minaprotocol/mina-daemon:${{ steps.get-tag.outputs.tag }}"
 
-      - uses: actions/checkout@v3
+      - name: Checkout Mina
+        uses: actions/checkout@v3
         with:
           repository: Minaprotocol/mina
           ref: develop
           path: mina
+
+      - name: Configure Helm
+        env:
+          KUBECONFIG_CONTENT: ${{secrets.KUBECONFIG}}
+        run: |
+          umask 0077
+          mkdir -p $HOME/.kube
+          echo "$KUBECONFIG_CONTENT" > $HOME/.kube/config
 
       - name: Deploy
         env:
@@ -27,9 +37,7 @@ jobs:
             --values=values.yaml
             --set-file=mina.runtimeConfig=resources/daemon.json
             --set=mina.image=minaprotocol/mina-daemon:${{ steps.get-tag.outputs.tag }}
-          KUBECONFIG_CONTENT: ${{secrets.KUBECONFIG}}
         run: |
-          mkdir -p $HOME/.kube && echo "$KUBECONFIG_CONTENT" > $HOME/.kube/config
           helm upgrade seeds mina/helm/seed-node $HELM_ARGS
           helm upgrade producers mina/helm/block-producer $HELM_ARGS
           helm upgrade snark-worker mina/helm/snark-worker/ $HELM_ARGS --set-file=publicKey=resources/key-05.pub
