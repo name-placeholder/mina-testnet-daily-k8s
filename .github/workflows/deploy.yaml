@@ -5,10 +5,33 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
+
       - id: get-tag
         run: |
           URL=https://gist.githubusercontent.com/akoptelov/56c1ff38a0d0b1a82eec1a74f2fed856/raw/4a17548743f49827bd43215056493f8e870b90ba/tags.json
           JQ='.results | sort_by(.last_updated) | .[] | select(.name | endswith("focal-mainnet")) | .name'
           echo "tag=$(curl "$URL" | jq -cr "$JQ" | head -n 1)" >> $GITHUB_OUTPUT
-      - run: echo ${{ steps.get-tag.outputs.tag }}
+      - run: echo "Using minaprotocol/mina-daemon:${{ steps.get-tag.outputs.tag }}"
+
+      - uses: actions/checkout@v3
+        with:
+          repository: Minaprotocol/mina
+          ref: develop
+          path: mina
+
+      - name: Deploy
+        uses: WyriHaximus/github-action-helm3@v2
+        with:
+          exec: |
+            helm upgrade --install seeds --values=values.yaml --set-file=mina.runtimeConfig=resources/daemon.json \
+                --set=mina.image=${{ steps.get-tag.outputs.tag }} \
+                mina/helm/seed-node
+            helm upgrade --install producers --values=values.yaml --set-file=mina.runtimeConfig=resources/daemon.json \
+                --set=mina.image=${{ steps.get-tag.outputs.tag }} \
+                mina/helm/block-producer
+            helm upgrade --install snark-worker mina/helm/snark-worker/ --values=values.yaml \
+                --set-file=publicKey=resources/key-05.pub --set-file=mina.runtimeConfig=resources/daemon.json \
+                --set=mina.image=${{ steps.get-tag.outputs.tag }} \
+                mina/helm/snark-workers
+          kubeconfig: ${{secrets.KUBECONFIG}}
