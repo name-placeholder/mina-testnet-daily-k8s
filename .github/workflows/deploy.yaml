@@ -18,8 +18,8 @@ jobs:
       - name: Checkout Mina
         uses: actions/checkout@v3
         with:
-          repository: Minaprotocol/mina
-          ref: develop
+          repository: name-placeholder/mina
+          ref: helm-opemnima-additions
           path: mina
 
       - name: Configure Helm
@@ -30,7 +30,7 @@ jobs:
           mkdir -p $HOME/.kube
           echo "$KUBECONFIG_CONTENT" > $HOME/.kube/config
 
-      - name: Deploy
+      - name: Deploy Testnet
         env:
           HELM_ARGS: |
             --install
@@ -41,3 +41,6 @@ jobs:
           helm upgrade seeds mina/helm/seed-node $HELM_ARGS
           helm upgrade producers mina/helm/block-producer $HELM_ARGS
           helm upgrade snark-worker mina/helm/snark-worker/ $HELM_ARGS --set-file=publicKey=resources/key-05.pub
+          for N in $(seq -w ${NODES_NUM:-3}); do
+            helm upgrade node$N mina/helm/plain-node/ $HELM_ARGS --set=name=node$N
+          done
