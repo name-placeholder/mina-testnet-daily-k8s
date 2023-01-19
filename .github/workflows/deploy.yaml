@@ -1,6 +1,10 @@
 name: Mina Testnet Deployment
 run-name: Deploys a test network using latest Mina docker image
-on: [push]
+on:
+  push:
+  schedule:
+    # daily at 5:00 UTC
+    - cron: '0 5 * * *'
 jobs:
   deploy:
     runs-on: ubuntu-latest
