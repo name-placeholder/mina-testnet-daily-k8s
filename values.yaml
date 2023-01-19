@@ -32,6 +32,11 @@ blockProducerConfigs:
     privateKeySecret: prod2-privkey-secret
     isolated: false
 
+resources:
+  enable: true
+  image: adrnagy/mina-node-monitoring:17c9127
+  args: ["--executable-name=mina"]
+
 nodeSelector:
   preemptible: false
 
