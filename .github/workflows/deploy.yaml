@@ -44,3 +44,4 @@ jobs:
           for N in $(seq -w ${NODES_NUM:-3}); do
             helm upgrade node$N mina/helm/plain-node/ $HELM_ARGS --set=name=node$N
           done
+          helm upgrade frondend mina/helm/openmina-frontend $HELM_ARGS
