@@ -4,11 +4,11 @@ mina:
   privkeyPass:
   exposeGraphql: true
   seedPeers:
-    - /dns4/seed1/tcp/10909/p2p/12D3KooWBT8pyJAfWJhdeGYAtKvcaUmm78ExyZ6uo6BEimYNVat1
+    - /dns4/seed-seed1/tcp/10909/p2p/12D3KooWBT8pyJAfWJhdeGYAtKvcaUmm78ExyZ6uo6BEimYNVat1
 frontend:
   image: directcuteo/mina-frontend:scstate12
   nodePort: 31313
-  nodes: [ "seed1", "prod1", "prod2", "node1", "node2", "node3" ]
+  nodes: [ "seed1", "prod1", "prod2", "node1", "node2", "node3", "node4" ]
 
 healthcheck:
   enabled: false
@@ -17,7 +17,8 @@ healthcheck:
   initialDelaySeconds: 60
 
 plainNodesConfig:
-  count: 3
+  count: 4
+  namePrefix: node
 
 seedConfigs:
   - name: seed1

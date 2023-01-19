@@ -46,7 +46,5 @@ jobs:
           helm upgrade seeds mina/helm/seed-node $HELM_ARGS
           helm upgrade producers mina/helm/block-producer $HELM_ARGS
           helm upgrade snark-worker mina/helm/snark-worker/ $HELM_ARGS --set-file=publicKey=resources/key-05.pub
-          for N in $(seq -w ${NODES_NUM:-3}); do
-            helm upgrade node$N mina/helm/plain-node/ $HELM_ARGS --set=name=node$N
-          done
+          helm upgrade nodes mina/helm/plain-node/ $HELM_ARGS
           helm upgrade frontend mina/helm/openmina-frontend $HELM_ARGS
