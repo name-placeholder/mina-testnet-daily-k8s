@@ -16,7 +16,7 @@ jobs:
         run: |
           URL="https://hub.docker.com/v2/namespaces/minaprotocol/repositories/mina-daemon/tags?page_size=25"
           JQ='.results | sort_by(.last_updated) | .[] | select(.name | endswith("focal-berkeley")) | .name'
-          TAG=$(curl "$URL" | jq -cr "$JQ" | head -n 1)
+          TAG=$(curl -s "$URL" | jq -cr "$JQ" | head -n 1)
           [ -n "$TAG" ] || { echo "Cannot get latest focal-berkeley tag"; exit 1; }
           echo "tag=$TAG" >> $GITHUB_OUTPUT
       - run: echo "Using minaprotocol/mina-daemon:${{ steps.get-tag.outputs.tag }}"
