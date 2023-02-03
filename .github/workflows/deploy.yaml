@@ -35,6 +35,7 @@ jobs:
           umask 0077
           mkdir -p $HOME/.kube
           echo "$KUBECONFIG_CONTENT" > $HOME/.kube/config
+          kubectl config set-context --current --namespace ${NAMESPACE:-mina-testnet}
 
       - name: Deploy Testnet
         env:
@@ -44,8 +45,9 @@ jobs:
             --set-file=mina.runtimeConfig=resources/daemon.json
             --set=mina.image=minaprotocol/mina-daemon:${{ steps.get-tag.outputs.tag }}
         run: |
-          helm upgrade seeds mina/helm/seed-node $HELM_ARGS
-          helm upgrade producers mina/helm/block-producer $HELM_ARGS
-          helm upgrade snark-worker mina/helm/snark-worker/ $HELM_ARGS --set-file=publicKey=resources/key-05.pub
-          helm upgrade nodes mina/helm/plain-node/ $HELM_ARGS
-          helm upgrade frontend mina/helm/openmina-frontend $HELM_ARGS
+          cat values.yaml
+          helm upgrade --install seeds mina/helm/seed-node $HELM_ARGS
+          helm upgrade --install producers mina/helm/block-producer $HELM_ARGS
+          helm upgrade --install snark-worker mina/helm/snark-worker/ $HELM_ARGS --set-file=publicKey=resources/key-05.pub
+          helm upgrade --install nodes mina/helm/plain-node/ $HELM_ARGS
+          helm upgrade --install frontend mina/helm/openmina-frontend $HELM_ARGS
