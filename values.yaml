@@ -4,11 +4,15 @@ mina:
   privkeyPass:
   exposeGraphql: true
   seedPeers:
-    - /dns4/seed-seed1/tcp/10909/p2p/12D3KooWBT8pyJAfWJhdeGYAtKvcaUmm78ExyZ6uo6BEimYNVat1
+    - /dns4/seed1/tcp/10909/p2p/12D3KooWBT8pyJAfWJhdeGYAtKvcaUmm78ExyZ6uo6BEimYNVat1
+  # memRequest: 4Gi
+  # cpuRequest: 4
+
+
 frontend:
-  image: directcuteo/mina-frontend:scstate12
-  nodePort: 31313
-  nodes: [ "seed1", "prod1", "prod2", "node1", "node2", "node3", "node4" ]
+  image: directcuteo/mina-frontend:resources2
+  nodePort: 31315
+  nodes: [ "seed1", "prod1", "prod2", "node1", "node2", "node3", "node4", "snark-coordinator" ]
 
 healthcheck:
   enabled: false
@@ -36,6 +40,11 @@ resources:
   enable: true
   image: adrnagy/mina-node-monitoring:17c9127
   args: ["--executable-name=mina"]
+
+bpfDebugger:
+  enable: true
+  image: akoptelov/mina-network-debugger:bef771e
+  chainId: 227641503b35c283f2ca3a9ed628775944727c6ce38f86168a5c3e0389e65f1e
 
 nodeSelector:
   preemptible: false
