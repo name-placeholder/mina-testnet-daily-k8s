@@ -44,7 +44,7 @@ resources:
 bpfDebugger:
   enable: true
   image: akoptelov/mina-network-debugger:bef771e
-  chainId: 227641503b35c283f2ca3a9ed628775944727c6ce38f86168a5c3e0389e65f1e
+  chainId: f8eecad2443cd48f1a74a087257cac9fe052f2af5bbd1666d967e47104228fb0
 
 nodeSelector:
   preemptible: false
